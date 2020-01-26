@@ -1,0 +1,17 @@
+name: rust-crawler
+on: [push]
+jobs:
+  build_and_test_app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: Build rust-clippy builder
+        run: |
+          docker build -t rust-builder:1.36.0 -f builder1.dockerfile .
+      - name: build app
+        container: rust-builder:1.36.0
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy
+          cargo build --release --bin rust-crawler
